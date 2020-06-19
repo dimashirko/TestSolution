@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,9 +31,9 @@ namespace SpeedControlSystemService.Controllers
         [HttpGet]
         [Route("speedextremums/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}})}")]
         [Route("speedextremums/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}})}")]
-        public IEnumerable<SpeedInfo> GetSpeedExtremums(DateTime date)
+        public string GetSpeedExtremums(DateTime date)
         {
-            if (!CheckTime())
+            if (CheckTime())
             {
                 return _systemCore.GetSpeedExtremums(date);
             }
@@ -49,11 +48,11 @@ namespace SpeedControlSystemService.Controllers
         /// <param name="speed">Speed limit</param>
         /// <returns>All speed excesses for selected date</returns>
         [HttpGet]
-        [Route("speedexcesses/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}})}/{speed:float:regex(\\d{{2}}.\\d)}")]
-        [Route("speedexcesses/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}})}/{speed:float:regex(\\d{{2}}.\\d)}")]
-        public IEnumerable<SpeedInfo> GetSpeedExcesses(DateTime date, float speed)
+        [Route("speedexcesses/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}})}/{speed:float:regex(\\d{{1,3}}.\\d)}")]
+        [Route("speedexcesses/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}})}/{speed:float:regex(\\d{{1,3}}.\\d)}")]
+        public string GetSpeedExcesses(DateTime date, float speed)
         {
-            if (!CheckTime())
+            if (CheckTime())
             {
                 return _systemCore.GetSpeedExcesses(date, speed);
             }
@@ -99,9 +98,10 @@ namespace SpeedControlSystemService.Controllers
         /// <param name="date">Fixation date</param>
         /// <param name="number">License plate</param>
         /// <param name="speed">Fixed speed</param>
+        /// https://localhost:5001/speedcontrolsystem/fixspeed/12-12-2020%2010:03:30/3324%20KB-1/122.2
         [HttpGet]
-        [Route("fixspeed/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
-        [Route("fixspeed/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
+        [Route("fixspeed/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{1,3}}.\\d)}")]
+        [Route("fixspeed/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{1,3}}.\\d)}")]
         public void FixSpeed(DateTime date, string licensePlate, float speed)
         {
             _systemCore.FixSpeed(date, licensePlate, speed);
