@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace SpeedControlSystemService
 {
-    public class FilesDbProcessor
+    /// <summary>
+    /// Works with files that stores system information
+    /// </summary>
+    public class FilesProcessor
     {
 
     }

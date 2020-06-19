@@ -15,11 +15,13 @@ namespace SpeedControlSystemService.Controllers
     {
         private readonly ILogger<SpeedControlSystemController> _logger;
         private readonly AppConfig _appConfig;
+        private readonly SpeedControlSystemCore _systemCore;
 
         public SpeedControlSystemController(ILogger<SpeedControlSystemController> logger, IOptionsMonitor<AppConfig> configuration)
         {
             _logger = logger;
             _appConfig = configuration.CurrentValue;
+            _systemCore = new SpeedControlSystemCore(_appConfig.DataBasePath);
         }
 
         /// <summary>
@@ -34,7 +36,7 @@ namespace SpeedControlSystemService.Controllers
         {
             if (!CheckTime())
             {
-                return new List<SpeedInfo>() { new SpeedInfo() { Date = DateTime.Now, LicensePlate = "Extremums", Speed = 67.7f } };
+                return _systemCore.GetSpeedExtremums(date);
             }
             else
                 throw GetTimeError();
@@ -53,7 +55,7 @@ namespace SpeedControlSystemService.Controllers
         {
             if (!CheckTime())
             {
-                return new List<SpeedInfo>() { new SpeedInfo() { Date = DateTime.Now, LicensePlate = "Excesses", Speed = 67.7f } };
+                return _systemCore.GetSpeedExcesses(date, speed);
             }
             else
                 throw GetTimeError();
@@ -98,11 +100,11 @@ namespace SpeedControlSystemService.Controllers
         /// <param name="number">License plate</param>
         /// <param name="speed">Fixed speed</param>
         [HttpGet]
-        [Route("speedexcesses/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
-        [Route("speedexcesses/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
-        public void AddSpeed(DateTime date, string licensePlate, float speed)
+        [Route("fixspeed/{date:datetime:regex(\\d{{4}}-\\d{{2}}-\\d{{2}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
+        [Route("fixspeed/{date:datetime:regex(\\d{{2}}-\\d{{2}}-\\d{{4}} \\d{{2}}:\\d{{2}}:\\d{{2}})}/{licensePlate:length(9):regex(\\d{{4}} [[a-zA-Z]]{{2}}-\\d)}/{speed:float:regex(\\d{{2}}.\\d)}")]
+        public void FixSpeed(DateTime date, string licensePlate, float speed)
         {
-
+            _systemCore.FixSpeed(date, licensePlate, speed);
         }
     }
 }
