@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace TestSolution
+namespace SpeedControlSystemService
 {
     public class Program
     {
